@@ -14,7 +14,7 @@ import '../css/AccordioBlinkingItem.css';
 const MainPage: FC = () => {
     const {store} = useContext(Context);
     const {users, setUsers} = useUsers();
-    const {messages, setMessages} = useMessages();
+    const {messages, setMessages, oldMessagesRef} = useMessages();
     const [recipient, setRecipient] = useState('');
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
@@ -23,20 +23,27 @@ const MainPage: FC = () => {
     const [blinkingMessages, setBlinkingMessages] = useState<string[]>([]);
 
     useEffect(() => {
-        subscribe()
+        getNewMessages();
+        return () => clearInterval(intervalId);
     }, [])
 
-    const subscribe = async () => {
-        try {
-            const responseNewMessage = await UserService.getNewMessage(store.user.username);
-            setMessages(prev => [...prev, responseNewMessage.data]);
-            setBlinkingMessages(prev => [...prev, responseNewMessage.data._id]);
-            await subscribe();
-        } catch (e) {
-            setTimeout(() => {
-                subscribe()
-            }, 500)
-        }
+    let intervalId: NodeJS.Timeout;
+
+    const getNewMessages = () => {
+        intervalId = setInterval(async () => {
+            try {
+                const newMessages = await UserService.fetchMessages(store.user.username);
+                setMessages(newMessages.data);
+                const newMessageIds = newMessages.data
+                    .map(message => message._id)
+                    .filter(id => !oldMessagesRef.current.includes(id));
+
+                setBlinkingMessages(prev => [...prev, ...newMessageIds]);
+                oldMessagesRef.current = newMessages.data.map(message => message._id);
+            } catch (e) {
+                console.error(e);
+            }
+        }, 5000);
     }
 
     const closeToast = (id: number) => {
@@ -105,7 +112,7 @@ const MainPage: FC = () => {
                                 options={users}
                                 freeSolo
                                 getOptionLabel={(option) => typeof option === 'string' ? option : option.username}
-                                sx={{ width: 400 }}
+                                sx={{ width: 200 }}
                                 renderInput={(params) => <TextField {...params} label="Recipient" variant="outlined" />}
                                 value={users.find(user => user.username === recipient) || recipient}
                                 onInputChange={(event, newInputValue) => {

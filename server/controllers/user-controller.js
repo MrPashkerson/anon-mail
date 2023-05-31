@@ -1,7 +1,5 @@
 const userService = require('../service/user-service');
 const messageService = require('../service/message-service');
-const events = require('events');
-const emitter = new events.EventEmitter();
 
 class UserController {
     async login(req, res, next) {
@@ -60,19 +58,7 @@ class UserController {
         try {
             const { sender, recipient, title, body } = req.body;
             const message = await messageService.createMessage(sender, recipient, title, body);
-            emitter.emit(`newMessage_${recipient}`, message);
             return res.json(message);
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    async getNewMessage(req, res, next) {
-        try {
-            const { recipient } = req.body;
-            emitter.once(`newMessage_${recipient}`, (message) => {
-                return res.json(message);
-            })
         } catch (e) {
             next(e);
         }
