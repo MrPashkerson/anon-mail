@@ -13,8 +13,8 @@ const LoginForm: FC = () => {
         try {
             await store.login(username);
         } catch (e) {
-            // @ts-ignore
-            setError(e);
+            console.log(e);
+            setError('Enter username');
         }
     }
 

@@ -8,7 +8,7 @@ class UserController {
         try {
             const { username } = req.body;
             const userData = await userService.login(username);
-            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 60 * 1000, httpOnly: true, secure: true}); // For https add flag ", secure: true"
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: "none"}); // For https add flag ", secure: true"
             return res.json(userData);
         } catch (e) {
             next(e);
@@ -30,7 +30,7 @@ class UserController {
         try {
             const { refreshToken } = req.cookies;
             const userData = await userService.refresh(refreshToken);
-            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 60 * 1000, httpOnly: true, secure: true}); // For https add flag ", secure: true"
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 60 * 1000, httpOnly: true, secure: true, sameSite: "none"}); // For https add flag ", secure: true"
             return res.json(userData);
         } catch (e) {
             next(e);
