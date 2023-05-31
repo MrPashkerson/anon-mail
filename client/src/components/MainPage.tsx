@@ -13,7 +13,7 @@ import '../css/AccordioBlinkingItem.css';
 
 const MainPage: FC = () => {
     const {store} = useContext(Context);
-    const users = useUsers();
+    const {users, setUsers} = useUsers();
     const {messages, setMessages} = useMessages();
     const [recipient, setRecipient] = useState('');
     const [title, setTitle] = useState('');

@@ -33,7 +33,7 @@ class TokenService {
       tokenData.refreshToken = refreshToken;
       return tokenData.save();
     }
-    await tokenModel.create({ user: userId, refreshToken });
+    return await tokenModel.create({user: userId, refreshToken});
   }
 
   async removeToken(refreshToken) {

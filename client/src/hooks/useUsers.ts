@@ -18,5 +18,5 @@ export function useUsers() {
         fetchUsers();
     }, []);
 
-    return users;
+    return { users, setUsers };
 }

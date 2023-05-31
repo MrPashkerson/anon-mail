@@ -16,7 +16,7 @@ export default class UserService {
         return $api.post('/sendMessage', { sender, recipient, title, body });
     }
 
-    static async getNewMessage(recipient: string): Promise<AxiosResponse<IMessage>> {
-        return $api.post<IMessage>('/getNewMessage', { recipient });
+    static async getNewMessage(recipient: string): Promise<any> {
+        return $api.post('/getNewMessage', { recipient });
     }
 }
